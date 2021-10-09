@@ -1,4 +1,4 @@
-specVersion: 0.0.1
+specVersion: 0.0.2
 schema:
   file: ./schema.graphql
 dataSources:
@@ -8,6 +8,7 @@ dataSources:
     source:
       address: "0x1539ffBa6D1c63255dD9F61627c8B4a855E82F2a"
       abi: CoinLeaguesFactory
+      startBlock: 19971927
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -29,4 +30,31 @@ dataSources:
           handler: handleOwnershipTransferred
         - event: SettingsChanged(address)
           handler: handleSettingsChanged
-      file: ./src/mapping.ts
+      file: ./src/mappings/mapping.ts
+templates:
+  - name: CoinLeagues
+    kind: ethereum/contract
+    network: matic
+    source:
+      abi: CoinLeagues
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      file: ./src/mappings/coinleagues.ts
+      entities:
+        - CoinLeagues
+      abis:
+        - name: CoinLeagues
+          file: ./abis/CoinLeagues.json
+      eventHandlers:
+        - event: JoinedGame(address)
+          handler: handleJoinedGame
+        - event: StartedGame(uint256)
+          handler: handleStartedGame
+        - event: EndedGame(uint256)
+          handler: handleEndedGame
+        - event: AbortedGame(uint256)
+          handler: handleAbortedGame
+        - event: Claimed(address,uint256)
+          handler: handleClaimed

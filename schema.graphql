@@ -1,5 +1,42 @@
-type ExampleEntity @entity {
+
+enum GameStatus {
+  Waiting,
+  Started,
+  Ended,
+  Aborted,
+}
+
+
+type Game @entity {
   id: ID!
-  count: BigInt!
-  allow: Boolean! # bool
+  status: GameStatus!
+  currentPlayers: BigInt!
+  numPlayers: BigInt!
+  entry: BigInt!
+  coins: BigInt!
+  players: [Player!]!
+}
+
+
+type Player @entity {
+  id: ID!
+  totalWinnedGames: BigInt!
+  totalFirstWinnedGames: BigInt!
+  totalSecondWinnedGames: BigInt!
+  totalThirdWinnedGames: BigInt!
+  totalJoinedGames: BigInt!
+  joinedGames: [Game!]!
+  winnedGames: [Game!]!
+  winnedFirstGames: [Game!]!
+  winnedSecondGames: [Game!]!
+  winnedThirdGames: [Game!]!
+  totalEarned: BigInt
+}
+
+type Earnings @entity {
+  id: ID!
+  player: Player
+  place: BigInt
+  amount: BigInt
+  game: Game
 }
