@@ -6,15 +6,27 @@ enum GameStatus {
   Aborted,
 }
 
+type PlayerGame @entity {
+  id: ID! # Set to `${game.id}-${player.id}`
+  player: Player!
+  game: Game!
+}
+
+
 
 type Game @entity {
   id: ID!
+  startedAt: BigInt
+  endedAt: BigInt
+  abortedAt: BigInt
   status: GameStatus!
   currentPlayers: BigInt!
   numPlayers: BigInt!
   entry: BigInt!
-  coins: BigInt!
-  players: [Player!]!
+  numCoins: BigInt!
+  playerAddresses: [Bytes!]!
+  players: [PlayerGame!] @derivedFrom(field: "game")
+  earnings: [Earning!]! @derivedFrom(field: "game")
 }
 
 
@@ -24,19 +36,17 @@ type Player @entity {
   totalFirstWinnedGames: BigInt!
   totalSecondWinnedGames: BigInt!
   totalThirdWinnedGames: BigInt!
-  totalJoinedGames: BigInt!
-  joinedGames: [Game!]!
-  winnedGames: [Game!]!
-  winnedFirstGames: [Game!]!
-  winnedSecondGames: [Game!]!
-  winnedThirdGames: [Game!]!
+  totalJoinedGames: BigInt! 
+  games: [PlayerGame!] @derivedFrom(field: "player")
   totalEarned: BigInt
 }
 
-type Earnings @entity {
+
+
+type Earning @entity {
   id: ID!
-  player: Player
-  place: BigInt
-  amount: BigInt
-  game: Game
+  player: Player!
+  place: BigInt!
+  amount: BigInt!
+  game: Game!
 }

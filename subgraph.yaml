@@ -8,28 +8,22 @@ dataSources:
     source:
       address: "0x1539ffBa6D1c63255dD9F61627c8B4a855E82F2a"
       abi: CoinLeaguesFactory
-      startBlock: 19971927
+      startBlock: 19971925
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
       language: wasm/assemblyscript
       entities:
-        - AllowCreateChanged
-        - GameCreated
-        - OwnershipTransferred
-        - SettingsChanged
+        - Game
+        - Player
       abis:
         - name: CoinLeaguesFactory
           file: ./abis/CoinLeaguesFactory.json
+        - name: CoinLeagues
+          file: ./abis/CoinLeagues.json
       eventHandlers:
-        - event: AllowCreateChanged(bool)
-          handler: handleAllowCreateChanged
         - event: GameCreated(address,uint256)
           handler: handleGameCreated
-        - event: OwnershipTransferred(indexed address,indexed address)
-          handler: handleOwnershipTransferred
-        - event: SettingsChanged(address)
-          handler: handleSettingsChanged
       file: ./src/mappings/mapping.ts
 templates:
   - name: CoinLeagues
@@ -43,7 +37,8 @@ templates:
       language: wasm/assemblyscript
       file: ./src/mappings/coinleagues.ts
       entities:
-        - CoinLeagues
+        - Game
+        - Player
       abis:
         - name: CoinLeagues
           file: ./abis/CoinLeagues.json

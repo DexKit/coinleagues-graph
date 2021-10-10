@@ -4,10 +4,10 @@
   "scripts": {
     "codegen": "graph codegen",
     "build": "graph build",
-    "deploy": "graph deploy --node https://api.thegraph.com/deploy/ DexKit/coinleagues",
-    "create-local": "graph create --node http://localhost:8020/ DexKit/coinleagues",
-    "remove-local": "graph remove --node http://localhost:8020/ DexKit/coinleagues",
-    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 DexKit/coinleagues"
+    "deploy": "graph deploy --node https://api.thegraph.com/deploy/ JoaoCampos89/coinleagues",
+    "create-local": "graph create --node http://localhost:8020/ JoaoCampos89/coinleagues",
+    "remove-local": "graph remove --node http://localhost:8020/ JoaoCampos89/coinleagues",
+    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 JoaoCampos89/coinleagues"
   },
   "dependencies": {
     "@graphprotocol/graph-cli": "0.22.2",
