@@ -109,13 +109,14 @@ export function handleClaimed(event: Claimed): void {
         );
       }
     }
+
     let earning = new Earning(`${game.id}-${player.id}`);
     earning.game = game.id;
     earning.player = player.id;
     earning.place = event.params.place;
     earning.amount = ZERO_BI;
+    earning.at = event.block.timestamp;
     earning.save();
-    game.earnings.push(earning.id);
     player.save();
   }
 }
