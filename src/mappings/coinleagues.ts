@@ -1,3 +1,4 @@
+import { Winned } from "../../generated/CoinLeaguesFactoryRoles/CoinLeagues";
 import { Earning, Game, Player, PlayerGame } from "../../generated/schema";
 import {
   AbortedGame,
@@ -5,6 +6,7 @@ import {
   EndedGame,
   JoinedGame,
   StartedGame,
+  WinnedMultiple,
 } from "../../generated/templates/CoinLeagues/CoinLeagues";
 import { ONE_BI, SECOND_BI, ZERO_BI } from "./helpers";
 
@@ -70,6 +72,47 @@ export function handleAbortedGame(event: AbortedGame): void {
   game.save();
 }
 
+export function handleWinned(event: Winned): void {
+  let game = Game.load(event.address.toHexString()) as Game;
+  let player = Player.load(event.params.first.toHexString()) as Player;
+  let earning = new Earning(`${game.id}-${player.id}`);
+  earning.game = game.id;
+  earning.player = player.id;
+  earning.place = ZERO_BI;
+  earning.amount = ZERO_BI;
+  earning.save();
+}
+
+export function handleWinnedMultiple(event: WinnedMultiple): void {
+  let game = Game.load(event.address.toHexString()) as Game;
+  let playerZero = Player.load(event.params.first.toHexString()) as Player;
+  let playerOne = Player.load(event.params.second.toHexString()) as Player;
+  let playerSecond = Player.load(event.params.third.toHexString()) as Player;
+  let earning = new Earning(`${game.id}-${playerZero.id}`);
+  earning.game = game.id;
+  earning.player = playerZero.id;
+  earning.place = ZERO_BI;
+  earning.amount = ZERO_BI;
+  earning.claimed = false;
+  earning.save();
+
+  earning = new Earning(`${game.id}-${playerOne.id}`);
+  earning.game = game.id;
+  earning.player = playerOne.id;
+  earning.place = ONE_BI;
+  earning.amount = ZERO_BI;
+  earning.claimed = false;
+  earning.save();
+
+  earning = new Earning(`${game.id}-${playerSecond.id}`);
+  earning.game = game.id;
+  earning.player = playerSecond.id;
+  earning.place = SECOND_BI;
+  earning.amount = ZERO_BI;
+  earning.claimed = false;
+  earning.save();
+}
+
 export function handleClaimed(event: Claimed): void {
   let player = Player.load(event.params.playerAddress.toHexString());
   // let leaguesContract = CoinLeaguesContract.bind(event.address);
@@ -110,12 +153,10 @@ export function handleClaimed(event: Claimed): void {
       }
     }
 
-    let earning = new Earning(`${game.id}-${player.id}`);
-    earning.game = game.id;
-    earning.player = player.id;
-    earning.place = event.params.place;
-    earning.amount = ZERO_BI;
+    let earning = Earning.load(`${game.id}-${player.id}`) as Earning;
+    earning.amount = event.params.amountSend;
     earning.at = event.block.timestamp;
+    earning.claimed = true;
     earning.save();
     player.save();
   }
