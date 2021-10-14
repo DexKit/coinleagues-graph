@@ -55,7 +55,8 @@ type Earning @entity {
   id: ID!
   player: Player!
   place: BigInt!
-  amount: BigInt!
-  at: BigInt!
+  amount: BigInt
+  claimed: Boolean!
+  at: BigInt
   game: Game!
 }
