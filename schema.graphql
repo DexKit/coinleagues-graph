@@ -21,6 +21,7 @@ type PlayerGame @entity {
 
 type Game @entity {
   id: ID!
+  createdAt: BigInt
   startedAt: BigInt
   type: GameType
   duration: BigInt

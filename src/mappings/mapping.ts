@@ -13,6 +13,7 @@ export function handleGameCreated(event: GameCreated): void {
   if(!game){
     game = new Game(event.params.gameAddress.toHexString());
     game.status = "Waiting";
+    game.createdAt = event.block.timestamp;
     game.type = BigInt.fromI32(leaguesContract.game().value0).equals(ZERO_BI) ? 'Bull' : 'Bear';
     game.duration = leaguesContract.game().value7;
     game.numPlayers = leaguesContract.game().value6;
