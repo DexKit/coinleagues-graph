@@ -21,6 +21,7 @@ export function handleGameCreated(event: GameCreated): void {
     game.entry = leaguesContract.game().value10;
     game.currentPlayers = ZERO_BI;
     game.playerAddresses = new Array<Bytes>(0);
+    game.intId = event.params.id;
     game.save();
   }
  
