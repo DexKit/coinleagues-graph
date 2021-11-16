@@ -6,6 +6,7 @@ enum GameStatus {
   Aborted,
 }
 
+
 enum GameType {
  Bull,
  Bear,
@@ -31,9 +32,18 @@ type Game @entity {
   numPlayers: BigInt!
   entry: BigInt!
   numCoins: BigInt!
+  isBitboyTeam: Boolean
   playerAddresses: [Bytes!]!
   players: [PlayerGame!] @derivedFrom(field: "game")
   earnings: [Earning!] @derivedFrom(field: "game")
+}
+
+type GameState @entity{
+  id: ID!
+  startedGames: [Bytes!]!
+  totalStarted: BigInt!
+  createdGames: [Bytes!]!
+  totalCreated: BigInt! 
 }
 
 
@@ -45,7 +55,7 @@ type Player @entity {
   totalThirdWinnedGames: BigInt!
   totalJoinedGames: BigInt! 
   games: [PlayerGame!] @derivedFrom(field: "player")
-  totalEarned: BigInt
+  totalEarned: BigInt!
 }
 
 

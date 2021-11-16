@@ -1,5 +1,5 @@
 import { Winned } from "../../generated/CoinLeaguesFactoryRoles/CoinLeagues";
-import { Earning, Game, Player, PlayerGame } from "../../generated/schema";
+import { Earning, Game, GameState, Player, PlayerGame } from "../../generated/schema";
 import {
   AbortedGame,
   Claimed,
@@ -8,7 +8,7 @@ import {
   StartedGame,
   WinnedMultiple,
 } from "../../generated/templates/CoinLeagues/CoinLeagues";
-import { ONE_BI, SECOND_BI, ZERO_BI } from "./helpers";
+import { IS_BITBOY_TEAM, ONE_BI, SECOND_BI, ZERO_BI } from "./helpers";
 
 
 export function handleJoinedGame(event: JoinedGame): void {
@@ -22,7 +22,8 @@ export function handleJoinedGame(event: JoinedGame): void {
     player.totalSecondWinnedGames = ZERO_BI;
     player.totalThirdWinnedGames = ZERO_BI;
     player.totalWinnedGames = ZERO_BI;
-   
+    player.totalEarned = ZERO_BI;
+
     player.save();
   } else {
     
@@ -44,9 +45,16 @@ export function handleJoinedGame(event: JoinedGame): void {
     playerGame.player = player.id;
     playerGame.save();
   }
+  const playerAddress = event.params.playerAddress;
   const playerAddresses = game.playerAddresses;
-  playerAddresses.push(event.params.playerAddress);
+  playerAddresses.push(playerAddress);
   game.playerAddresses = playerAddresses;
+  if(IS_BITBOY_TEAM(playerAddress.toHexString())){
+    game.isBitboyTeam = true;
+  }else{
+    game.isBitboyTeam = false;
+  }
+  
 
   game.save();
 }
@@ -114,7 +122,7 @@ export function handleWinnedMultiple(event: WinnedMultiple): void {
 }
 
 export function handleClaimed(event: Claimed): void {
-  let player = Player.load(event.params.playerAddress.toHexString());
+  let player = Player.load(event.params.playerAddress.toHexString()) as Player;
   // let leaguesContract = CoinLeaguesContract.bind(event.address);
   let game = Game.load(event.address.toHexString()) as Game;
   if (player && game) {
@@ -154,6 +162,10 @@ export function handleClaimed(event: Claimed): void {
     }
 
     let earning = Earning.load(`${game.id}-${player.id}`) as Earning;
+    if(player.totalEarned){
+      player.totalEarned = player.totalEarned.plus(event.params.amountSend);
+    }
+  
     earning.amount = event.params.amountSend;
     earning.at = event.block.timestamp;
     earning.claimed = true;

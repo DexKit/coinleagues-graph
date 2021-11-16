@@ -1,0 +1,8 @@
+export const BITBOY_TEAM: string[] = [
+  "0x186035678f02f19d311ad24ea73a08ea4cd7f01e",
+  "0xd1c86ea01ee183a48c86edad3be357b40e106f97",
+  "0x77279c13336751281bfc20f7381475f2db7deac0",
+  "0xcfc34220dabd0afa999db309d9789a463e344380",
+  "0xaf5e3194e9e2d076d9de7d73cae3ea23d9278b14",
+  "0xcb8b2c541e18adbc8b4b8a42a3ca769f4eb72e6c"
+];

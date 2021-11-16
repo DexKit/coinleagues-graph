@@ -1,14 +1,15 @@
-import { ZERO_BI, ONE_BI } from "./helpers"
+import { ZERO_BI } from "./helpers"
 import {
   GameCreated,
 } from "../../generated/CoinLeaguesFactory/CoinLeaguesFactory"
-import { Game } from "../../generated/schema"
+import { Game} from "../../generated/schema"
 import { CoinLeagues as CoinLeaguesContract } from "../../generated/templates/CoinLeagues/CoinLeagues"
 import { CoinLeagues as CoinLeaguesTemplates } from "../../generated/templates"
 import { Bytes, BigInt } from "@graphprotocol/graph-ts"
 export function handleGameCreated(event: GameCreated): void {
   CoinLeaguesTemplates.create(event.params.gameAddress);
   let game = Game.load(event.params.gameAddress.toHexString());
+
   let leaguesContract = CoinLeaguesContract.bind(event.params.gameAddress);
   if(!game){
     game = new Game(event.params.gameAddress.toHexString());
@@ -24,5 +25,6 @@ export function handleGameCreated(event: GameCreated): void {
     game.intId = event.params.id;
     game.save();
   }
- 
+
+
 }
