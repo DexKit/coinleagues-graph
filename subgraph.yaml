@@ -3,12 +3,12 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum/contract
-    name: CoinLeaguesFactoryRoles
+    name: CoinLeaguesFactory
     network: matic
     source:
-      address: "0x8fFA73bB9404c6fa01A16e0F996787bD3F4CeF66"
-      abi: CoinLeaguesFactoryRoles
-      startBlock: 20250578
+      address: "0xA67B9dBfb1371DEBB7f60B681A74798f014cb007"
+      abi: CoinLeaguesFactory
+      startBlock: 21709884
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -17,8 +17,8 @@ dataSources:
         - Game
         - Player
       abis:
-        - name: CoinLeaguesFactoryRoles
-          file: ./abis/CoinLeaguesFactoryRoles.json
+        - name: CoinLeaguesFactory
+          file: ./abis/CoinLeaguesFactory.json
         - name: CoinLeagues
           file: ./abis/CoinLeagues.json
       eventHandlers:
@@ -43,7 +43,7 @@ templates:
         - name: CoinLeagues
           file: ./abis/CoinLeagues.json
       eventHandlers:
-        - event: JoinedGame(address)
+        - event: JoinedGame(address,address)
           handler: handleJoinedGame
         - event: StartedGame(uint256)
           handler: handleStartedGame
@@ -51,6 +51,8 @@ templates:
           handler: handleEndedGame
         - event: AbortedGame(uint256)
           handler: handleAbortedGame
+        - event: Withdrawed(address,uint256)
+          handler: handleWithdrawed
         - event: Claimed(address,uint256,uint256)
           handler: handleClaimed
         - event: Winned(address)

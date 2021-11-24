@@ -23,6 +23,7 @@ type Game @entity {
   intId: BigInt
   createdAt: BigInt
   startedAt: BigInt
+  startsAt: BigInt
   type: GameType
   duration: BigInt
   endedAt: BigInt
@@ -36,6 +37,8 @@ type Game @entity {
   playerAddresses: [Bytes!]!
   players: [PlayerGame!] @derivedFrom(field: "game")
   earnings: [Earning!] @derivedFrom(field: "game")
+  withdraws: [Withdrawal!] @derivedFrom(field: "game")
+  affiliate: [Affiliate!] @derivedFrom(field: "game")
 }
 
 type GameState @entity{
@@ -67,5 +70,20 @@ type Earning @entity {
   amount: BigInt
   claimed: Boolean!
   at: BigInt
+  game: Game!
+}
+
+type Withdrawal @entity {
+  id: ID!
+  player: Player!
+  at: BigInt
+  game: Game!
+}
+
+
+type Affiliate @entity {
+  id: ID!
+  affiliate: Bytes!
+  player: Player!
   game: Game!
 }

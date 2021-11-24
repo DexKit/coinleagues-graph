@@ -1,5 +1,5 @@
 import { Winned } from "../../generated/CoinLeaguesFactoryRoles/CoinLeagues";
-import { Earning, Game, GameState, Player, PlayerGame } from "../../generated/schema";
+import { Earning, Game, Player, PlayerGame, Affiliate } from "../../generated/schema";
 import {
   AbortedGame,
   Claimed,
@@ -14,6 +14,7 @@ import { IS_BITBOY_TEAM, ONE_BI, SECOND_BI, ZERO_BI } from "./helpers";
 export function handleJoinedGame(event: JoinedGame): void {
   let game = Game.load(event.address.toHexString()) as Game;
   let player = Player.load(event.params.playerAddress.toHexString());
+ 
   if (player === null) {
     player = new Player(event.params.playerAddress.toHexString());
     player.totalEarned = ZERO_BI;
@@ -44,6 +45,11 @@ export function handleJoinedGame(event: JoinedGame): void {
     playerGame.game = game.id;
     playerGame.player = player.id;
     playerGame.save();
+    const affiliate = new Affiliate(`${game.id}-${player.id}-${event.params.affiliate.toHexString()}`);
+    affiliate.affiliate = event.params.affiliate;
+    affiliate.game = game.id;
+    affiliate.player = player.id;
+    affiliate.save();
   }
   const playerAddress = event.params.playerAddress;
   const playerAddresses = game.playerAddresses;
