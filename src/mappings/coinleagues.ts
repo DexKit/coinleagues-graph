@@ -1,5 +1,5 @@
 import { Winned } from "../../generated/CoinLeaguesFactoryRoles/CoinLeagues";
-import { Earning, Game, Player, PlayerGame, Affiliate } from "../../generated/schema";
+import { Earning, Game, Player, PlayerGame, Affiliate, Withdrawal } from "../../generated/schema";
 import {
   AbortedGame,
   Claimed,
@@ -7,6 +7,7 @@ import {
   JoinedGame,
   StartedGame,
   WinnedMultiple,
+  Withdrawed,
 } from "../../generated/templates/CoinLeagues/CoinLeagues";
 import { IS_BITBOY_TEAM, ONE_BI, SECOND_BI, ZERO_BI } from "./helpers";
 
@@ -84,6 +85,16 @@ export function handleAbortedGame(event: AbortedGame): void {
   game.abortedAt = event.params.timestamp;
   game.status =  "Aborted";  
   game.save();
+}
+
+export function handleWithdrawed(event: Withdrawed): void {
+  let game = Game.load(event.address.toHexString()) as Game;
+  let player = Player.load(event.params.playerAddress.toHexString()) as Player;
+  let withdraw = new Withdrawal(`${game.id}-${player.id}`);
+  withdraw.game = game.id;
+  withdraw.player = player.id;
+  withdraw.at = event.params.timestamp;
+  withdraw.save()
 }
 
 export function handleWinned(event: Winned): void {
