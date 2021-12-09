@@ -4,9 +4,9 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: CoinLeaguesFactory
-    network: matic
+    network: {{network}}
     source:
-      address: '0xb9E4B1719b575541d008f30BbB379C66C13d2C4b'
+      address: '{{address}}'
       abi: CoinLeaguesFactory
       startBlock: 21709884
     mapping:

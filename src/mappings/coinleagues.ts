@@ -1,5 +1,6 @@
+import { Address, BigInt } from "@graphprotocol/graph-ts";
 import { Winned } from "../../generated/CoinLeaguesFactoryRoles/CoinLeagues";
-import { Earning, Game, Player, PlayerGame, Affiliate, Withdrawal } from "../../generated/schema";
+import { Earning, Game, Player, PlayerGame, Affiliate, Withdrawal, House, HouseClaim } from "../../generated/schema";
 import {
   AbortedGame,
   Claimed,
@@ -10,29 +11,23 @@ import {
   Withdrawed,
 } from "../../generated/templates/CoinLeagues/CoinLeagues";
 import { IS_BITBOY_TEAM, ONE_BI, SECOND_BI, ZERO_BI } from "./helpers";
-
+import { createPlayer } from "./utils";
+import { log } from '@graphprotocol/graph-ts'
+import { HouseClaimed } from "../../generated/CoinLeaguesFactory/CoinLeagues";
 
 export function handleJoinedGame(event: JoinedGame): void {
   let game = Game.load(event.address.toHexString()) as Game;
   let player = Player.load(event.params.playerAddress.toHexString());
  
   if (player === null) {
-    player = new Player(event.params.playerAddress.toHexString());
-    player.totalEarned = ZERO_BI;
-    player.totalJoinedGames = ONE_BI;
-    player.totalFirstWinnedGames = ZERO_BI;
-    player.totalSecondWinnedGames = ZERO_BI;
-    player.totalThirdWinnedGames = ZERO_BI;
-    player.totalWinnedGames = ZERO_BI;
-    player.totalEarned = ZERO_BI;
-
-    player.save();
+   player = createPlayer(event.params.playerAddress.toHexString(), game.entry)
+   
   } else {
     
     if (player.totalJoinedGames) {
       player.totalJoinedGames = player.totalJoinedGames.plus(ONE_BI);
     }
-
+    player.totalSpent = player.totalSpent.plus(game.entry);
     player.save();
   }
   
@@ -46,11 +41,26 @@ export function handleJoinedGame(event: JoinedGame): void {
     playerGame.game = game.id;
     playerGame.player = player.id;
     playerGame.save();
-    const affiliate = new Affiliate(`${game.id}-${player.id}-${event.params.affiliate.toHexString()}`);
-    affiliate.affiliate = event.params.affiliate;
-    affiliate.game = game.id;
-    affiliate.player = player.id;
-    affiliate.save();
+    if(event.params.affiliate.toString() !== Address.zero().toString()){
+      const affiliate = new Affiliate(`${game.id}-${player.id}-${event.params.affiliate.toHexString()}`);
+      affiliate.affiliate = event.params.affiliate;
+      affiliate.game = game.id;
+      affiliate.type = 'Joined';
+      affiliate.player = player.id;
+      affiliate.status =  'Waiting';
+      affiliate.createdAt =  event.block.timestamp;
+      affiliate.save();
+      let affIds = game.affiliateIds;
+      if(affIds && affIds.length){
+        affIds.push( affiliate.id);
+      }else{
+        affIds = [affiliate.id];
+      }
+      game.affiliateIds = affIds;
+    }
+
+
+ 
   }
   const playerAddress = event.params.playerAddress;
   const playerAddresses = game.playerAddresses;
@@ -77,20 +87,82 @@ export function handleEndedGame(event: EndedGame): void {
   let game = Game.load(event.address.toHexString()) as Game;
   game.endedAt = event.params.timestamp;
   game.status = "Ended";
+  const affiliates = game.affiliateIds;
+  if(affiliates && affiliates.length){
+    for (let index = 0; index <  affiliates.length; index++) {
+      const aff = Affiliate.load(affiliates[index]) as Affiliate;
+      aff.status = 'Finished';
+      aff.save();
+      let player = Player.load(aff.player);
+      if(player === null){
+         const pl = createPlayer(aff.player, game.entry);
+         pl.estimatedAffiliateEarnings = pl.estimatedAffiliateEarnings.plus(game.entry.times(BigInt.fromString('5')).div(BigInt.fromString('1000')));
+         pl.save();
+      }else{
+        if(aff.type === 'Creator'){
+             // Calculate here the estimated affiliates, 5% for the creator
+           player.estimatedAffiliateEarnings = player.estimatedAffiliateEarnings.plus(game.entry.times(BigInt.fromString('5')).div(BigInt.fromString('1000')))
+        }else{
+            // Calculate here the estimated affiliates, 5% for all total joins
+           player.estimatedAffiliateEarnings = player.estimatedAffiliateEarnings.plus(game.entry.times(BigInt.fromString('5')).div(BigInt.fromString('1000')).div(game.currentPlayers)   )
+        }
+        player.save()    
+      }
+    }
+  }
+  let claim = new HouseClaim(game.id);
+  claim.amount = game.currentPlayers.times(game.entry).times(BigInt.fromI32(10)).div(BigInt.fromI32(100));
+  claim.claimed = false;
+  claim.game = game.id;
+  claim.save();
+
   game.save();
 }
+
+
 
 export function handleAbortedGame(event: AbortedGame): void {
   let game = Game.load(event.address.toHexString()) as Game;
   game.abortedAt = event.params.timestamp;
   game.status =  "Aborted";  
+  const affiliates = game.affiliateIds;
+
+  if(affiliates && affiliates.length){
+    for (let index = 0; index <  affiliates.length; index++) {
+      const aff = Affiliate.load(affiliates[index]) as Affiliate;
+      aff.status = 'Failed';
+      aff.save();
+    }
+  }
+
   game.save();
+}
+
+export function handleHouseClaims(event: HouseClaimed): void {
+  let house = House.load('house') as House;
+  let game = Game.load(event.address.toHexString()) as Game;
+  if(house === null){
+    house = new House('house');
+    house.totalClaims = ONE_BI;
+    house.totalClaimed = game.currentPlayers.times(game.entry).times(BigInt.fromI32(10)).div(BigInt.fromI32(100));
+  }else{
+    house.totalClaims = house.totalClaims.plus(ONE_BI) as BigInt;
+    house.totalClaimed = house.totalClaimed.plus(game.currentPlayers.times(game.entry).times(BigInt.fromI32(10)).div(BigInt.fromI32(100))) as BigInt;
+  }
+  let claim = HouseClaim.load(game.id) as HouseClaim;
+  claim.at = event.block.timestamp;
+  claim.claimed = true;
+  claim.save()
+  
+
+  
 }
 
 export function handleWithdrawed(event: Withdrawed): void {
   let game = Game.load(event.address.toHexString()) as Game;
   let player = Player.load(event.params.playerAddress.toHexString()) as Player;
   let withdraw = new Withdrawal(`${game.id}-${player.id}`);
+  player.totalSpent = player.totalSpent.minus(game.entry);
   withdraw.game = game.id;
   withdraw.player = player.id;
   withdraw.at = event.params.timestamp;
@@ -181,6 +253,9 @@ export function handleClaimed(event: Claimed): void {
     let earning = Earning.load(`${game.id}-${player.id}`) as Earning;
     if(player.totalEarned){
       player.totalEarned = player.totalEarned.plus(event.params.amountSend);
+    }
+    if(player.EarnedMinusSpent){
+      player.EarnedMinusSpent = player.totalEarned.minus(player.totalSpent);
     }
   
     earning.amount = event.params.amountSend;

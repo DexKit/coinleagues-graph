@@ -6,6 +6,17 @@ enum GameStatus {
   Aborted,
 }
 
+enum AffiliateType {
+ Creator,
+ Joined,
+}
+
+enum AffiliateStatus{
+  Waiting,
+  Finished,
+  Failed,
+}
+
 
 enum GameType {
  Bull,
@@ -22,6 +33,7 @@ type Game @entity {
   id: ID!
   intId: BigInt
   createdAt: BigInt
+  createdBy: Bytes!
   startedAt: BigInt
   startsAt: BigInt
   type: GameType
@@ -35,10 +47,11 @@ type Game @entity {
   numCoins: BigInt!
   isBitboyTeam: Boolean
   playerAddresses: [Bytes!]!
+  affiliateIds: [String!]
   players: [PlayerGame!] @derivedFrom(field: "game")
   earnings: [Earning!] @derivedFrom(field: "game")
   withdraws: [Withdrawal!] @derivedFrom(field: "game")
-  affiliate: [Affiliate!] @derivedFrom(field: "game")
+  affiliates: [Affiliate!] @derivedFrom(field: "game")
 }
 
 type GameState @entity{
@@ -59,6 +72,10 @@ type Player @entity {
   totalJoinedGames: BigInt! 
   games: [PlayerGame!] @derivedFrom(field: "player")
   totalEarned: BigInt!
+  totalSpent: BigInt!
+  EarnedMinusSpent: BigInt!
+  estimatedAffiliateEarnings: BigInt!
+  
 }
 
 
@@ -67,6 +84,20 @@ type Earning @entity {
   id: ID!
   player: Player!
   place: BigInt!
+  amount: BigInt
+  claimed: Boolean!
+  at: BigInt
+  game: Game!
+}
+
+type House @entity {
+  id: ID!
+  totalClaimed: BigInt!
+  totalClaims: BigInt!
+}
+
+type HouseClaim @entity {
+  id: ID!
   amount: BigInt
   claimed: Boolean!
   at: BigInt
@@ -84,6 +115,9 @@ type Withdrawal @entity {
 type Affiliate @entity {
   id: ID!
   affiliate: Bytes!
+  type: AffiliateType!
+  status: AffiliateStatus!
   player: Player!
+  createdAt: BigInt!
   game: Game!
 }
