@@ -6,7 +6,7 @@ dataSources:
     name: CoinLeaguesFactory
     network: matic
     source:
-      address: '0xb9E4B1719b575541d008f30BbB379C66C13d2C4b'
+      address: '0xc93f920483Db1122D6Fc7f2f832C3610c73C0C8E'
       abi: CoinLeaguesFactory
       startBlock: 21709884
     mapping:

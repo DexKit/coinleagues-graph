@@ -1,5 +1,5 @@
 import { Address, BigInt } from "@graphprotocol/graph-ts";
-import { Winned } from "../../generated/CoinLeaguesFactoryRoles/CoinLeagues";
+import { Winned } from "../../generated/CoinLeaguesFactory/CoinLeagues";
 import { Earning, Game, Player, PlayerGame, Affiliate, Withdrawal, House, HouseClaim } from "../../generated/schema";
 import {
   AbortedGame,
@@ -12,7 +12,6 @@ import {
 } from "../../generated/templates/CoinLeagues/CoinLeagues";
 import { IS_BITBOY_TEAM, ONE_BI, SECOND_BI, ZERO_BI } from "./helpers";
 import { createPlayer } from "./utils";
-import { log } from '@graphprotocol/graph-ts'
 import { HouseClaimed } from "../../generated/CoinLeaguesFactory/CoinLeagues";
 
 export function handleJoinedGame(event: JoinedGame): void {
