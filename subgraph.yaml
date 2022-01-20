@@ -4,11 +4,11 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: CoinLeaguesFactory
-    network: matic
+    network: bsc
     source:
-      address: '0xc93f920483Db1122D6Fc7f2f832C3610c73C0C8E'
+      address: '0x34C21825ef6Bfbf69cb8748B4587f88342da7aFb'
       abi: CoinLeaguesFactory
-      startBlock: 21709884
+      startBlock: 14373397
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -28,7 +28,7 @@ dataSources:
 templates:
   - name: CoinLeagues
     kind: ethereum/contract
-    network: matic
+    network: bsc
     source:
       abi: CoinLeagues
     mapping:
