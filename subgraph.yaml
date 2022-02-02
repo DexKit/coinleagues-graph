@@ -6,9 +6,9 @@ dataSources:
     name: CoinLeaguesFactory
     network: bsc
     source:
-      address: '0x34C21825ef6Bfbf69cb8748B4587f88342da7aFb'
+      address: '0xa1B3a09D5f83a52085fd37becb229038bCeacFf3'
       abi: CoinLeaguesFactory
-      startBlock: 14373397
+      startBlock: 14903487
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
