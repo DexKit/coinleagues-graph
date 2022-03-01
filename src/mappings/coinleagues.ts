@@ -165,6 +165,7 @@ export function handleHouseClaims(event: HouseClaimed): void {
       .times(game.entry)
       .times(BigInt.fromI32(10))
       .div(BigInt.fromI32(100));
+    house.save();
   } else {
     house.totalClaims = house.totalClaims.plus(ONE_BI) as BigInt;
     house.totalClaimed = house.totalClaimed.plus(
@@ -173,11 +174,15 @@ export function handleHouseClaims(event: HouseClaimed): void {
         .times(BigInt.fromI32(10))
         .div(BigInt.fromI32(100))
     ) as BigInt;
+    house.save();
   }
-  let claim = HouseClaim.load(game.id) as HouseClaim;
-  claim.at = event.block.timestamp;
-  claim.claimed = true;
-  claim.save();
+  if (game) {
+    let claim = HouseClaim.load(game.id) as HouseClaim;
+    claim.at = event.block.timestamp;
+    claim.claimed = true;
+    claim.save();
+  }
+
 }
 
 export function handleWithdrawed(event: Withdrawed): void {
