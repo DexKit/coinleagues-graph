@@ -4,11 +4,11 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: CoinLeaguesFactory
-    network: {{network}}
+    network: {{ network }}
     source:
-      address: '{{address}}'
+      address: "{{address}}"
       abi: CoinLeaguesFactory
-      startBlock: {{startBlock}}
+      startBlock: {{ startBlock }}
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -28,7 +28,7 @@ dataSources:
 templates:
   - name: CoinLeagues
     kind: ethereum/contract
-    network: {{network}}
+    network: {{ network }}
     source:
       abi: CoinLeagues
     mapping:
@@ -59,3 +59,5 @@ templates:
           handler: handleWinned
         - event: WinnedMultiple(address,address,address)
           handler: handleWinnedMultiple
+        - event: HouseClaimed()
+          handler: handleHouseClaims

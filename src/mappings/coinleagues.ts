@@ -156,31 +156,44 @@ export function handleAbortedGame(event: AbortedGame): void {
 }
 
 export function handleHouseClaims(event: HouseClaimed): void {
-  let house = House.load("house") as House;
+  //let house = House.load("house") as House;
   let game = Game.load(event.address.toHexString()) as Game;
-  if (house === null) {
-    house = new House("house");
-    house.totalClaims = ONE_BI;
-    house.totalClaimed = game.currentPlayers
-      .times(game.entry)
-      .times(BigInt.fromI32(10))
-      .div(BigInt.fromI32(100));
-    house.save();
-  } else {
-    house.totalClaims = house.totalClaims.plus(ONE_BI) as BigInt;
-    house.totalClaimed = house.totalClaimed.plus(
-      game.currentPlayers
+  if (game) {
+    /* if (house === null) {
+       house = new House("house");
+       house.totalClaims = ONE_BI;
+       house.totalClaimed = game.currentPlayers
+         .times(game.entry)
+         .times(BigInt.fromI32(10))
+         .div(BigInt.fromI32(100));
+       house.save();
+     } else {
+       house.totalClaims = house.totalClaims.plus(ONE_BI) as BigInt;
+       house.totalClaimed = house.totalClaimed.plus(
+         game.currentPlayers
+           .times(game.entry)
+           .times(BigInt.fromI32(10))
+           .div(BigInt.fromI32(100))
+       ) as BigInt;
+       house.save();
+     }*/
+
+    let claim = HouseClaim.load(game.id) as HouseClaim;
+    if (claim) {
+      claim.at = event.block.timestamp;
+      claim.claimed = true;
+      claim.save();
+    } else {
+      let claim = new HouseClaim(game.id);
+      claim.amount = game.currentPlayers
         .times(game.entry)
         .times(BigInt.fromI32(10))
-        .div(BigInt.fromI32(100))
-    ) as BigInt;
-    house.save();
-  }
-  if (game) {
-    let claim = HouseClaim.load(game.id) as HouseClaim;
-    claim.at = event.block.timestamp;
-    claim.claimed = true;
-    claim.save();
+        .div(BigInt.fromI32(100));
+      claim.at = event.block.timestamp;
+      claim.claimed = true;
+      claim.save();
+    }
+
   }
 
 }
