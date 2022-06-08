@@ -4,6 +4,7 @@
   "scripts": {
     "codegen": "graph codegen",
     "build": "graph build",
+    "prepare:v3:mumbai": "mustache config/mumbai.json subgraph.template.yaml > subgraph.yaml",
     "prepare:v2:matic": "mustache config/matic.json subgraph.template.yaml > subgraph.yaml",
     "prepare:v2:bsc": "mustache config/bsc.json subgraph.template.yaml > subgraph.yaml",
     "prepare:nft-v2:matic": "mustache config/nft-matic.json subgraph.template.yaml > subgraph.yaml",
@@ -11,6 +12,7 @@
     "deploy:v2": "yarn prepare:v2:matic && graph deploy --node https://api.thegraph.com/deploy/ JoaoCampos89/coinleaguesv2",
     "deploy:bsc:v2": "yarn prepare:v2:bsc && graph deploy --node https://api.thegraph.com/deploy/ JoaoCampos89/coinleaguebsc",
     "deploy:nft": "yarn prepare:nft-v2:matic && graph deploy --node https://api.thegraph.com/deploy/ JoaoCampos89/coinleagues-nftroom",
+    "deploy:v3:mumbai": "yarn prepare:v3:mumbai && graph deploy --node https://api.thegraph.com/deploy/ JoaoCampos89/coinleaguemumbaiv3",
     "create-local": "graph create --node http://localhost:8020/ JoaoCampos89/coinleagues",
     "remove-local": "graph remove --node http://localhost:8020/ JoaoCampos89/coinleagues",
     "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 JoaoCampos89/coinleagues"

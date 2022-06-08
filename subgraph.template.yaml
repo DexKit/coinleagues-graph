@@ -3,11 +3,11 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum/contract
-    name: CoinLeaguesFactory
+    name: CoinLeagueFactoryV3
     network: {{ network }}
     source:
       address: "{{address}}"
-      abi: CoinLeaguesFactory
+      abi: CoinLeagueFactoryV3
       startBlock: {{ startBlock }}
     mapping:
       kind: ethereum/events
@@ -17,47 +17,27 @@ dataSources:
         - Game
         - Player
       abis:
-        - name: CoinLeaguesFactory
-          file: ./abis/CoinLeaguesFactory.json
-        - name: CoinLeagues
-          file: ./abis/CoinLeagues.json
+        - name: CoinLeagueFactoryV3
+          file: ./abis/CoinLeagueFactoryV3.json
       eventHandlers:
-        - event: GameCreated(address,uint256)
+        - event: GameCreated(uint256)
           handler: handleGameCreated
-      file: ./src/mappings/mapping.ts
-templates:
-  - name: CoinLeagues
-    kind: ethereum/contract
-    network: {{ network }}
-    source:
-      abi: CoinLeagues
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.5
-      language: wasm/assemblyscript
-      file: ./src/mappings/coinleagues.ts
-      entities:
-        - Game
-        - Player
-      abis:
-        - name: CoinLeagues
-          file: ./abis/CoinLeagues.json
-      eventHandlers:
-        - event: JoinedGame(address,address)
+        - event: JoinedGame(address,address,uint256)
           handler: handleJoinedGame
-        - event: StartedGame(uint256)
+        - event: StartedGame(uint256,uint256)
           handler: handleStartedGame
-        - event: EndedGame(uint256)
+        - event: EndedGame(uint256,uint256)
           handler: handleEndedGame
-        - event: AbortedGame(uint256)
+        - event: AbortedGame(uint256,uint256)
           handler: handleAbortedGame
-        - event: Withdrawed(address,uint256)
+        - event: Withdrawed(address,uint256,uint256)
           handler: handleWithdrawed
-        - event: Claimed(address,uint256,uint256)
+        - event: Claimed(address,uint256,uint256,uint256)
           handler: handleClaimed
-        - event: Winned(address)
+        - event: Winned(address,uint256)
           handler: handleWinned
-        - event: WinnedMultiple(address,address,address)
+        - event: WinnedMultiple(address,address,address,uint256)
           handler: handleWinnedMultiple
-        - event: HouseClaimed()
+        - event: HouseClaimed(uint256)
           handler: handleHouseClaims
+      file: ./src/mappings/mapping.ts
