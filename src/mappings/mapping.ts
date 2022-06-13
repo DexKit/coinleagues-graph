@@ -14,7 +14,7 @@ export function handleGameCreated(event: GameCreated): void {
   let leagueContract = CoinLeagueContract.bind(event.address);
 
   if (!game) {
-    game = new Game(event.params.id.toHexString());
+    game = new Game(event.params.id.toString());
     game.status = "Waiting";
     game.createdAt = event.block.timestamp;
     game.createdBy = event.transaction.from;
