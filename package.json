@@ -10,6 +10,7 @@
     "prepare:nft-v2:matic": "mustache config/nft-matic.json subgraph.template.yaml > subgraph.yaml",
     "deploy:dev": "graph deploy --node https://api.thegraph.com/deploy/ JoaoCampos89/coinleaguesdev",
     "deploy:v2": "yarn prepare:v2:matic && graph deploy --node https://api.thegraph.com/deploy/ JoaoCampos89/coinleaguesv2",
+    "deploy:v3": "yarn prepare:v2:matic && graph deploy --node https://api.thegraph.com/deploy/ JoaoCampos89/coinleaguev3",
     "deploy:bsc:v2": "yarn prepare:v2:bsc && graph deploy --node https://api.thegraph.com/deploy/ JoaoCampos89/coinleaguebsc",
     "deploy:nft": "yarn prepare:nft-v2:matic && graph deploy --node https://api.thegraph.com/deploy/ JoaoCampos89/coinleagues-nftroom",
     "deploy:v3:mumbai": "yarn prepare:v3:mumbai && graph deploy --node https://api.thegraph.com/deploy/ JoaoCampos89/coinleaguemumbaiv3",
