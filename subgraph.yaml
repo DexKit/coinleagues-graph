@@ -6,9 +6,9 @@ dataSources:
     name: CoinLeagueFactoryV3
     network: matic
     source:
-      address: "0xCF69652a150Ce7d37E9b65E3194a51C892cEc96D"
+      address: "0x32970224454512599C9057d24288AA3b11fFA952"
       abi: CoinLeagueFactoryV3
-      startBlock: 29984934
+      startBlock: 30477640
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
